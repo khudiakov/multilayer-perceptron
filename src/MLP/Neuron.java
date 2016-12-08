@@ -1,23 +1,20 @@
 package MLP;
 
-import MLP.Activations.Sigmoid;
+import MLP.Activations.ActivationFunction;
 
 /**
  * Created by khudiakov on 07.12.2016.
  */
 
-enum ActivationFunction {SIGMOID}
-
 public class Neuron {
-    private ActivationFunction activationFunction;
-
+    public ActivationFunction activationFunction;
     public double[] inputWeights;
     public double biasWeight;
     public double output;
 
     public double difference = 0;
 
-    public Neuron(int inputsNumber,ActivationFunction activationFunction) {
+    public Neuron(int inputsNumber, ActivationFunction activationFunction) {
         this.activationFunction = activationFunction;
         this.inputWeights = new double[inputsNumber];
 
@@ -33,13 +30,7 @@ public class Neuron {
         for (int i=0; i<inputs.length; i++) {
             sum += inputs[i]*this.inputWeights[i];
         }
-        switch (this.activationFunction) {
-            case SIGMOID:
-                this.output = Sigmoid.evaluate(sum);
-                break;
-            default:
-                this.output = 0.0;
-        }
+        this.output = this.activationFunction.evaluate(sum);
         return this.output;
     }
 }

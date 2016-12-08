@@ -1,5 +1,7 @@
 package MLP;
 
+import MLP.Activations.Sigmoid;
+
 /**
  * Created by khudiakov on 08.12.2016.
  */
@@ -9,7 +11,7 @@ public class Layer {
     public Layer(int previousNumberNeurons, int numberNeurons) {
         this.neurons = new Neuron[numberNeurons];
         for (int i=0; i<this.neurons.length; i++) {
-            this.neurons[i] = new Neuron(previousNumberNeurons, ActivationFunction.SIGMOID);
+            this.neurons[i] = new Neuron(previousNumberNeurons, new Sigmoid());
         }
     }
 
