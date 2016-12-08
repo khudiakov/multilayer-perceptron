@@ -47,32 +47,25 @@ public class MLP {
     public void training(double[] inputs, double[] waiting) {
         forward(inputs);
 
-        Layer lastLayer = this.layers[this.layers.length-1];
-        Layer beforeLastLayer = this.layers[this.layers.length-2];
+        for (int i=this.layers.length-1; i>=0; i--) {
+            for (int q=0; q<layers[i].neurons.length; q++) {
+                Neuron qNeuron = layers[i].neurons[q];
+                double difference = 0.0;
 
-        for (int i=0; i<lastLayer.neurons.length; i++) {
-            Neuron iNeuron = lastLayer.neurons[i];
-            iNeuron.difference = iNeuron.activationFunction.evaluateDerivative(iNeuron.output)*(waiting[i]-iNeuron.output);
-            iNeuron.biasWeight += step*iNeuron.difference*1;
-
-            for (int j=0; j<lastLayer.neurons[i].inputWeights.length; j++) {
-                iNeuron.inputWeights[j] += step*iNeuron.difference*beforeLastLayer.neurons[j].output;
-            }
-        }
-
-        for (int i=this.layers.length-2; i>1; i--) {
-            for (int j=0; j<layers[i].neurons.length; j++) {
-                double sumDifference = 0.0;
-                for (int q=0; q<this.layers[i+1].neurons.length; q++) {
-                    sumDifference += this.layers[i+1].neurons[q].difference*this.layers[i+1].neurons[q].inputWeights[j];
+                if (i+1 != this.layers.length) {
+                    for (int k = 0; k < this.layers[i + 1].neurons.length; k++) {
+                        difference += this.layers[i + 1].neurons[k].difference * this.layers[i + 1].neurons[k].inputWeights[q];
+                    }
+                } else {
+                    difference = waiting[q]-qNeuron.output;
                 }
 
-                Neuron jNeuron = layers[i].neurons[j];
-                jNeuron.difference = jNeuron.activationFunction.evaluateDerivative(jNeuron.output)*sumDifference;
-                jNeuron.biasWeight += step*jNeuron.difference*1;
+                qNeuron.difference = qNeuron.activationFunction.evaluateDerivative(qNeuron.output)*difference;
+                qNeuron.biasWeight += step*qNeuron.difference*1;
 
-                for (int q=0; q<jNeuron.inputWeights.length; q++) {
-                    jNeuron.inputWeights[q] += step*jNeuron.difference*this.layers[i-1].neurons[q].output;
+                for (int j=0; j<qNeuron.inputWeights.length; j++) {
+                    double output = (i>0?this.layers[i-1].neurons[j].output:inputs[j]);
+                    qNeuron.inputWeights[j] += step*qNeuron.difference*output;
                 }
             }
         }
