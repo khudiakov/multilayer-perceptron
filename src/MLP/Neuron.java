@@ -16,7 +16,6 @@ public class Neuron {
     public double biasWeight;
     public double output;
     public double delta;
-    private static Random random = new Random();
 
     public Neuron(int inputsNumber, ActivationFunction activationFunction, double glorotBengioConstant) {
         this.activationFunction = activationFunction;

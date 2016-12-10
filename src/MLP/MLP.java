@@ -12,7 +12,6 @@ import java.util.Random;
 public class MLP {
     private Layer[] layers;
     private double learningRate;
-    private static Random random = new Random();
 
     private double localErrorsSum = 0.0;
     private int trainingsCount = 0;
@@ -77,14 +76,17 @@ public class MLP {
     }
 
     private void updateWeights() {
+        Random random = new Random();
+
         for (int i=this.layers.length-1; i>=0; i--) {
             for (int q = 0; q < layers[i].neurons.length; q++) {
                 Neuron qNeuron = layers[i].neurons[q];
                 qNeuron.biasWeight += learningRate * qNeuron.delta * 1;
 
                 for (int j = 0; j < qNeuron.inputWeights.length; j++) {
-                    if(random.nextBoolean())
-                    qNeuron.inputWeights[j] += learningRate * qNeuron.delta * qNeuron.inputs[j];
+                    if(random.nextBoolean()) {
+                        qNeuron.inputWeights[j] += learningRate * qNeuron.delta * qNeuron.inputs[j];
+                    }
                 }
             }
         }
