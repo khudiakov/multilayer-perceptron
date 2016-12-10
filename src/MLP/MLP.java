@@ -5,29 +5,16 @@ package MLP;
 
 public class MLP {
     private Layer[] layers;
-    private double step;
+    private double learningRate;
 
     private double localErrorsSum = 0.0;
     private int trainingsCount = 0;
 
-    public MLP(int[] layers, double step) {
-        this.step = step;
+    public MLP(int[] layers, double startLearningRate) {
+        this.learningRate = startLearningRate;
         this.layers = new Layer[layers.length-1];
         for (int i=1; i<layers.length; i++) {
             this.layers[i-1] = new Layer(layers[i-1], layers[i]);
-        }
-    }
-    public MLP(double[][][] weights, double step) {
-        this.step = step;
-        this.layers = new Layer[weights.length];
-        for (int l=0; l<weights.length; l++) {
-            this.layers[l] = new Layer(weights[l][0].length-1, weights[l].length);
-            for (int n=0; n<weights[l].length; n++) {
-                for (int w=0; w<weights[l][n].length-1; w++) {
-                    this.layers[l].neurons[n].inputWeights[w]=weights[l][n][w];
-                }
-                this.layers[l].neurons[n].biasWeight=weights[l][n][weights[l][n].length-1];
-            }
         }
     }
 
@@ -61,11 +48,11 @@ public class MLP {
                 }
 
                 qNeuron.delta = qNeuron.activationFunction.evaluateDerivative(qNeuron.output)*difference;
-                qNeuron.biasWeight += step*qNeuron.delta *1;
+                qNeuron.biasWeight += learningRate *qNeuron.delta *1;
 
                 for (int j=0; j<qNeuron.inputWeights.length; j++) {
                     double output = (i>0?this.layers[i-1].neurons[j].output:inputs[j]);
-                    qNeuron.inputWeights[j] += step*qNeuron.delta *output;
+                    qNeuron.inputWeights[j] += learningRate *qNeuron.delta *output;
                 }
             }
         }
@@ -77,21 +64,6 @@ public class MLP {
 
         localErrorsSum += Math.sqrt(sum/this.layers[this.layers.length-1].neurons.length);
         trainingsCount++;
-    }
-
-    public double[][][] getWeights() {
-        double[][][] weights = new double[layers.length][][];
-        for (int i=0; i<layers.length; i++) {
-            weights[i] = new double[layers[i].neurons.length][];
-            for (int j=0; j<layers[i].neurons.length; j++) {
-                weights[i][j] = new double[layers[i].neurons[j].inputWeights.length+1];
-                for (int z=0; z<layers[i].neurons[j].inputWeights.length; z++) {
-                    weights[i][j][z] = layers[i].neurons[j].inputWeights[z];
-                }
-                weights[i][j][weights[i][j].length-1] = layers[i].neurons[j].biasWeight;
-            }
-        }
-        return weights;
     }
 
     @Override
