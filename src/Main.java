@@ -18,7 +18,7 @@ public class Main {
         System.out.println("TRAINING");
         DataStream dataStream;
 
-        int epochs = 100000;
+        int epochs = 250000;
         double percent = epochs/100;
         double progress = 0;
         String dataPath = "C:\\Users\\khudiakov\\Projects\\fi.muni\\NeuralNetwork\\src\\datastream\\data\\iris.data";
@@ -41,7 +41,7 @@ public class Main {
 
         System.out.println("TESTING");
         dataPath = "C:\\Users\\khudiakov\\Projects\\fi.muni\\NeuralNetwork\\src\\datastream\\data\\iris.data";
-        dataStream = new DataStream(dataPath, nInput, nOutput, true);
+        dataStream = new DataStream(dataPath, nInput, nOutput, false);
         int all = 0;
         int success = 0;
         List<Data> dataset;
@@ -49,7 +49,7 @@ public class Main {
             for (Data data : dataset) {
                 all++;
                 double[] out = network.forward(data.inputs);
-                if (data.outputs[0] == Math.round(out[0])) {
+                if (Math.abs(data.outputs[0] - out[0])<0.25) {
                     success++;
                 }
             }
