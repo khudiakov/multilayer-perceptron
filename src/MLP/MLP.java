@@ -3,6 +3,7 @@ package MLP;
 import datastream.Data;
 
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by khudiakov on 08.12.2016.
@@ -11,6 +12,7 @@ import java.util.List;
 public class MLP {
     private Layer[] layers;
     private double learningRate;
+    private static Random random = new Random();
 
     private double localErrorsSum = 0.0;
     private int trainingsCount = 0;
@@ -81,6 +83,7 @@ public class MLP {
                 qNeuron.biasWeight += learningRate * qNeuron.delta * 1;
 
                 for (int j = 0; j < qNeuron.inputWeights.length; j++) {
+                    if(random.nextBoolean())
                     qNeuron.inputWeights[j] += learningRate * qNeuron.delta * qNeuron.inputs[j];
                 }
             }
