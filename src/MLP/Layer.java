@@ -10,8 +10,9 @@ public class Layer {
 
     public Layer(int previousNumberNeurons, int numberNeurons) {
         this.neurons = new Neuron[numberNeurons];
+        final double glorotBengioConstant = Math.sqrt(6 / (numberNeurons + ((double) previousNumberNeurons)));
         for (int i=0; i<this.neurons.length; i++) {
-            this.neurons[i] = new Neuron(previousNumberNeurons, new Sigmoid());
+            this.neurons[i] = new Neuron(previousNumberNeurons, new Sigmoid(), glorotBengioConstant);
         }
     }
 
