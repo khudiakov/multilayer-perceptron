@@ -6,37 +6,55 @@ import datastream.Data;
 import datastream.DataStream;
 
 import java.io.IOException;
+import java.util.List;
 
 public class Main {
-    private static double[] forward(MLP network, double[] input) {
-        return network.forward(input);
-    }
-
-    private static void training(MLP network, Data data) {
-        network.training(data.inputs, data.outputs);
-    }
-
     public static void main(String[] args) throws IOException {
-        MLP network = new MLP(new int[]{1,4,2,2,1}, 0.15);
+        int nInput = 4;
+        int nOutput = 1;
 
-        String dataPath = "C:\\Users\\khudiakov\\Projects\\fi.muni\\NeuralNetwork\\src\\datastream\\data\\sin.data";
+        MLP network = new MLP(new int[]{nInput, 2, nOutput}, 0.1);
+
+        System.out.println("TRAINING");
         DataStream dataStream;
-        Data data;
 
-        System.out.println(network);
-        for (int i=0; i<10000; i++) {
-            dataStream = new DataStream(dataPath);
-            while ((data = dataStream.next()) != null) {
-                training(network, data);
+        int epochs = 100000;
+        double percent = epochs/100;
+        double progress = 0;
+        String dataPath = "C:\\Users\\khudiakov\\Projects\\fi.muni\\NeuralNetwork\\src\\datastream\\data\\iris.data";
+        for (int i=0; i<epochs; i++) {
+            dataStream = new DataStream(dataPath, nInput, nOutput, true);
+            List<Data> dataset;
+            while (!(dataset=dataStream.getNextBatch()).isEmpty()) {
+                network.training(dataset, false);
+            }
+
+            if (i/percent - progress>0.1) {
+                progress = i/percent;
+                System.out.print("\rProgress: "+progress+"%");
             }
         }
-        System.out.println();
-        System.out.println(network);
+        System.out.println("\rProgress: 100%");
+        System.out.println("Global training error: "+network.getGlobalError());
         System.out.println();
 
-        System.out.println(network.getAvgDifference());
 
-        double[] out = forward(network, new double[]{2.586});
-        System.out.println(out[0]);
+        System.out.println("TESTING");
+        dataPath = "C:\\Users\\khudiakov\\Projects\\fi.muni\\NeuralNetwork\\src\\datastream\\data\\iris.data";
+        dataStream = new DataStream(dataPath, nInput, nOutput, true);
+        int all = 0;
+        int success = 0;
+        List<Data> dataset;
+        while (!(dataset=dataStream.getNextBatch()).isEmpty()) {
+            for (Data data : dataset) {
+                all++;
+                double[] out = network.forward(data.inputs);
+                if (data.outputs[0] == Math.round(out[0])) {
+                    success++;
+                }
+            }
+        }
+        System.out.println("Success: "+(double)success/all*100+"%");
+        System.out.println("Dataset fulfillness: "+dataStream.getFulfillness(3)*100+"%");
     }
 }
