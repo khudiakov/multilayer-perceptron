@@ -2,9 +2,13 @@ package MLP;
 /**
  * Created by khudiakov on 08.12.2016.
  */
+
 public class MLP {
     private Layer[] layers;
     private double step;
+
+    private double localErrorsSum = 0.0;
+    private int trainingsCount = 0;
 
     public MLP(int[] layers, double step) {
         this.step = step;
@@ -27,14 +31,6 @@ public class MLP {
         }
     }
 
-    public double getAvgDifference() {
-        double sum = 0.0;
-        for (Neuron neuron: layers[layers.length-1].neurons) {
-            sum += neuron.difference;
-        }
-        return sum/layers[layers.length-1].neurons.length;
-    }
-
     public double[] forward(double[] inputs) {
         double[] output = layers[0].exec(inputs);
         for (int i=1; i<this.layers.length; i++) {
@@ -42,6 +38,10 @@ public class MLP {
         }
 
         return output;
+    }
+
+    public double getGlobalError() {
+        return Math.sqrt(localErrorsSum/trainingsCount);
     }
 
     public void training(double[] inputs, double[] waiting) {
@@ -54,21 +54,29 @@ public class MLP {
 
                 if (i+1 != this.layers.length) {
                     for (int k = 0; k < this.layers[i + 1].neurons.length; k++) {
-                        difference += this.layers[i + 1].neurons[k].difference * this.layers[i + 1].neurons[k].inputWeights[q];
+                        difference += this.layers[i + 1].neurons[k].delta * this.layers[i + 1].neurons[k].inputWeights[q];
                     }
                 } else {
                     difference = waiting[q]-qNeuron.output;
                 }
 
-                qNeuron.difference = qNeuron.activationFunction.evaluateDerivative(qNeuron.output)*difference;
-                qNeuron.biasWeight += step*qNeuron.difference*1;
+                qNeuron.delta = qNeuron.activationFunction.evaluateDerivative(qNeuron.output)*difference;
+                qNeuron.biasWeight += step*qNeuron.delta *1;
 
                 for (int j=0; j<qNeuron.inputWeights.length; j++) {
                     double output = (i>0?this.layers[i-1].neurons[j].output:inputs[j]);
-                    qNeuron.inputWeights[j] += step*qNeuron.difference*output;
+                    qNeuron.inputWeights[j] += step*qNeuron.delta *output;
                 }
             }
         }
+
+        double sum = 0.0;
+        for (Neuron neuron:this.layers[this.layers.length-1].neurons) {
+            sum += Math.pow(neuron.delta, 2);
+        }
+
+        localErrorsSum += Math.sqrt(sum/this.layers[this.layers.length-1].neurons.length);
+        trainingsCount++;
     }
 
     public double[][][] getWeights() {

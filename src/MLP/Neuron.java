@@ -11,8 +11,7 @@ public class Neuron {
     public double[] inputWeights;
     public double biasWeight;
     public double output;
-
-    public double difference = 0;
+    public double delta;
 
     public Neuron(int inputsNumber, ActivationFunction activationFunction) {
         this.activationFunction = activationFunction;
