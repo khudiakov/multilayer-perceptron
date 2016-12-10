@@ -8,6 +8,7 @@ import MLP.Activations.ActivationFunction;
 
 public class Neuron {
     public ActivationFunction activationFunction;
+    public double[] inputs;
     public double[] inputWeights;
     public double biasWeight;
     public double output;
@@ -24,6 +25,8 @@ public class Neuron {
     }
 
     public double exec(double[] inputs) {
+        this.inputs = inputs;
+
         double sum = this.biasWeight;
 
         for (int i=0; i<inputs.length; i++) {

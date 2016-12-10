@@ -32,7 +32,7 @@ class DatasetClass {
 
 public  class DataStream {
     final private BufferedReader fileStream;
-    final private int batchLimit = 100;
+    final private int batchSize = 100;
     private boolean randomize;
     private int nInput;
     private int nOutput;
@@ -49,7 +49,7 @@ public  class DataStream {
     private void loadBatch() throws IOException {
         int count = 0;
         batch.clear();
-        while (count < batchLimit) {
+        while (count < batchSize) {
             count++;
             String line = fileStream.readLine();
             if (line == null) {

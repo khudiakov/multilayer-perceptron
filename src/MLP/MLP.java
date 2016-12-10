@@ -1,4 +1,9 @@
 package MLP;
+
+import datastream.Data;
+
+import java.util.List;
+
 /**
  * Created by khudiakov on 08.12.2016.
  */
@@ -31,39 +36,55 @@ public class MLP {
         return Math.sqrt(localErrorsSum/trainingsCount);
     }
 
-    public void training(double[] inputs, double[] waiting) {
-        forward(inputs);
+    public void training(List<Data> batch, boolean stochastic) {
+        for (Data data:batch) {
+            forward(data.inputs);
 
-        for (int i=this.layers.length-1; i>=0; i--) {
-            for (int q=0; q<layers[i].neurons.length; q++) {
-                Neuron qNeuron = layers[i].neurons[q];
-                double difference = 0.0;
+            for (int i = this.layers.length - 1; i >= 0; i--) {
+                for (int q = 0; q < layers[i].neurons.length; q++) {
+                    Neuron qNeuron = layers[i].neurons[q];
+                    double difference = 0.0;
 
-                if (i+1 != this.layers.length) {
-                    for (int k = 0; k < this.layers[i + 1].neurons.length; k++) {
-                        difference += this.layers[i + 1].neurons[k].delta * this.layers[i + 1].neurons[k].inputWeights[q];
+                    if (i + 1 != this.layers.length) {
+                        for (int k = 0; k < this.layers[i + 1].neurons.length; k++) {
+                            difference += this.layers[i + 1].neurons[k].delta * this.layers[i + 1].neurons[k].inputWeights[q];
+                        }
+                    } else {
+                        difference = data.outputs[q] - qNeuron.output;
                     }
-                } else {
-                    difference = waiting[q]-qNeuron.output;
-                }
 
-                qNeuron.delta = qNeuron.activationFunction.evaluateDerivative(qNeuron.output)*difference;
-                qNeuron.biasWeight += learningRate *qNeuron.delta *1;
-
-                for (int j=0; j<qNeuron.inputWeights.length; j++) {
-                    double output = (i>0?this.layers[i-1].neurons[j].output:inputs[j]);
-                    qNeuron.inputWeights[j] += learningRate *qNeuron.delta *output;
+                    qNeuron.delta = qNeuron.activationFunction.evaluateDerivative(qNeuron.output) * difference;
                 }
+            }
+            double sum = 0.0;
+            for (Neuron neuron:this.layers[this.layers.length-1].neurons) {
+                sum += Math.pow(neuron.delta, 2);
+            }
+
+            localErrorsSum += Math.sqrt(sum/this.layers[this.layers.length-1].neurons.length);
+            trainingsCount++;
+
+            if (stochastic) {
+                updateWeights();
             }
         }
 
-        double sum = 0.0;
-        for (Neuron neuron:this.layers[this.layers.length-1].neurons) {
-            sum += Math.pow(neuron.delta, 2);
+        if (!stochastic) {
+            updateWeights();
         }
+    }
 
-        localErrorsSum += Math.sqrt(sum/this.layers[this.layers.length-1].neurons.length);
-        trainingsCount++;
+    private void updateWeights() {
+        for (int i=this.layers.length-1; i>=0; i--) {
+            for (int q = 0; q < layers[i].neurons.length; q++) {
+                Neuron qNeuron = layers[i].neurons[q];
+                qNeuron.biasWeight += learningRate * qNeuron.delta * 1;
+
+                for (int j = 0; j < qNeuron.inputWeights.length; j++) {
+                    qNeuron.inputWeights[j] += learningRate * qNeuron.delta * qNeuron.inputs[j];
+                }
+            }
+        }
     }
 
     @Override
