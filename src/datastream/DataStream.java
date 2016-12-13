@@ -33,6 +33,7 @@ class DatasetClass {
 public  class DataStream {
     final private BufferedReader fileStream;
     final private int batchSize = 100;
+    private boolean normalize;
     private boolean randomize;
     private int nInput;
     private int nOutput;
@@ -42,9 +43,10 @@ public  class DataStream {
     private double[] mean;
     private double[] std;
 
-    public DataStream(String filepath, int nInput, int nOutput, boolean randomize) throws IOException {
+    public DataStream(String filepath, int nInput, int nOutput, boolean randomize, boolean normalize) throws IOException {
         fileStream = new BufferedReader(new FileReader(filepath));
         this.randomize = randomize;
+        this.normalize = normalize;
         this.nInput = nInput;
         this.nOutput = nOutput;
     }
@@ -111,10 +113,12 @@ public  class DataStream {
             }
         }
 
-        if (mean == null || std == null) {
-            defineDatasetMeanStd();
+        if (normalize) {
+            if (mean == null || std == null) {
+                defineDatasetMeanStd();
+            }
+            normalizeBatch();
         }
-        normalizeBatch();
     }
 
     public double getFulfillness(int numberOfExamplesOnOneParameter) {
