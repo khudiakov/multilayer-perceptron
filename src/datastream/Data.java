@@ -1,9 +1,5 @@
 package datastream;
 
-import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.List;
-
 /**
  * Created by khudiakov on 24/10/2016
  */
@@ -18,15 +14,15 @@ public class Data {
 
     @Override
     public String toString() {
-        String output = "Inputs: ";
+        String output = "Inputs: ( ";
         for (double input: this.inputs) {
-            output += input+", ";
+            output += input+" ";
         }
-        output += "\nOutputs: ";
+        output += ")\nOutputs: ( ";
         for (double out: this.outputs) {
-            output += out+", ";
+            output += out+" ";
         }
-        output += "\n";
+        output += ")\n";
         return output;
     }
 }
