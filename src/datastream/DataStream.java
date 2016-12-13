@@ -39,11 +39,46 @@ public  class DataStream {
     private List<Data> batch = new ArrayList<>();
     private List<DatasetClass> datasetClasses = new ArrayList<>();
 
+    private double[] mean;
+    private double[] std;
+
     public DataStream(String filepath, int nInput, int nOutput, boolean randomize) throws IOException {
         fileStream = new BufferedReader(new FileReader(filepath));
         this.randomize = randomize;
         this.nInput = nInput;
         this.nOutput = nOutput;
+    }
+
+    private void defineDatasetMeanStd() throws IOException {
+        mean = new double[this.nInput];
+        std = new double[this.nInput];
+
+        double[] inputSum = new double[this.nInput];
+        double[] inputSqrSum = new double[this.nInput];
+        int count = 0;
+
+        for (Data data: this.batch) {
+            count++;
+            for (int i=0; i<data.inputs.length; i++) {
+                inputSum[i] += data.inputs[i];
+                inputSqrSum[i] += Math.pow(data.inputs[i], 2);
+            }
+        }
+
+        if (count > 1) {
+            for (int i = 0; i < inputSum.length; i++) {
+                mean[i] = inputSum[i] / count;
+                std[i] = (1.0 / (count - 1)) * inputSqrSum[i];
+            }
+        }
+    }
+
+    private void normalizeBatch() {
+        for (Data data: batch) {
+            for (int i=0; i<data.inputs.length; i++) {
+                data.inputs[i] = (data.inputs[i]-mean[i])/std[i];
+            }
+        }
     }
 
     private void loadBatch() throws IOException {
@@ -75,6 +110,11 @@ public  class DataStream {
                 datasetClasses.add(new DatasetClass(outputs));
             }
         }
+
+        if (mean == null || std == null) {
+            defineDatasetMeanStd();
+        }
+        normalizeBatch();
     }
 
     public double getFulfillness(int numberOfExamplesOnOneParameter) {
