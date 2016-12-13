@@ -2,7 +2,6 @@ package MLP;
 
 import MLP.Activations.ActivationFunction;
 
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -13,6 +12,7 @@ public class Neuron {
     public ActivationFunction activationFunction;
     public double[] inputs;
     public double[] inputWeights;
+    public double[] weightsChange;
     public double biasWeight;
     public double output;
     public double delta;
@@ -20,8 +20,9 @@ public class Neuron {
     public Neuron(int inputsNumber, ActivationFunction activationFunction, double glorotBengioConstant) {
         this.activationFunction = activationFunction;
         this.inputWeights = new double[inputsNumber];
+        this.weightsChange = new double[inputsNumber];
 
-        this.biasWeight = ThreadLocalRandom.current().nextDouble(-glorotBengioConstant, glorotBengioConstant);
+        this.biasWeight = 0.0;
         for (int i=0; i<inputWeights.length; i++) {
             this.inputWeights[i] = ThreadLocalRandom.current().nextDouble(-glorotBengioConstant, glorotBengioConstant);
         }

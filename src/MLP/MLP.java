@@ -34,6 +34,9 @@ public class MLP {
     }
 
     public double getGlobalError() {
+        if (trainingsCount == 0) {
+            return Double.MAX_VALUE;
+        }
         return Math.sqrt(localErrorsSum/trainingsCount);
     }
 
@@ -85,7 +88,9 @@ public class MLP {
 
                 for (int j = 0; j < qNeuron.inputWeights.length; j++) {
                     if(random.nextBoolean()) {
-                        qNeuron.inputWeights[j] += learningRate * qNeuron.delta * qNeuron.inputs[j];
+                        double change = learningRate * qNeuron.delta * qNeuron.inputs[j] + 0.9 * qNeuron.weightsChange[j];
+                        qNeuron.inputWeights[j] += change;
+                        qNeuron.weightsChange[j] = change;
                     }
                 }
             }
