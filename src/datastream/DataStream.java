@@ -9,27 +9,6 @@ import java.util.*;
  * Created by khudiakov on 24/10/2016
  */
 
-class DatasetClass {
-    double[] outputs;
-    public int count;
-
-    public DatasetClass(double[] outputs) {
-        this.outputs = outputs;
-        this.count = 1;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof double[])
-            return Arrays.equals(this.outputs, (double[]) obj);
-        if (obj instanceof DatasetClass)
-            return Arrays.equals(this.outputs, ((DatasetClass) obj).outputs);
-        if (obj instanceof Data)
-            return Arrays.equals(this.outputs, ((Data) obj).outputs);
-        return false;
-    }
-}
-
 public  class DataStream {
     final private BufferedReader fileStream;
     final private int batchSize = 100;
@@ -38,7 +17,6 @@ public  class DataStream {
     private int nInput;
     private int nOutput;
     private List<Data> batch = new ArrayList<>();
-    private List<DatasetClass> datasetClasses = new ArrayList<>();
 
     private double[] mean;
     private double[] std;
@@ -104,13 +82,6 @@ public  class DataStream {
                 outputs[i] = Double.parseDouble(values[nInput+i]);
             }
             batch.add(new Data(inputs, outputs));
-
-            Optional<DatasetClass> datasetFilter = datasetClasses.stream().filter(x -> x.equals(outputs)).findFirst();
-            if (datasetFilter.isPresent()) {
-                datasetFilter.get().count++;
-            } else {
-                datasetClasses.add(new DatasetClass(outputs));
-            }
         }
 
         if (normalize) {
@@ -119,17 +90,6 @@ public  class DataStream {
             }
             normalizeBatch();
         }
-    }
-
-    public double getFulfillness(int numberOfExamplesOnOneParameter) {
-        int satisfied = 0;
-        int fulfill = nInput*numberOfExamplesOnOneParameter;
-        for (DatasetClass datasetClass: datasetClasses) {
-            if (datasetClass.count >= fulfill) {
-                satisfied++;
-            }
-        }
-        return satisfied/datasetClasses.size();
     }
 
     public List<Data> getNextBatch() throws IOException {
