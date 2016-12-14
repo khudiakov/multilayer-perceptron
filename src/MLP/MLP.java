@@ -10,14 +10,14 @@ import java.util.Random;
  */
 
 public class MLP {
-    private Layer[] layers;
+    public Layer[] layers;
     private double learningRate;
 
     private double localErrorsSum = 0.0;
     private int trainingsCount = 0;
 
-    public MLP(int[] layers, double startLearningRate) {
-        this.learningRate = startLearningRate;
+    public MLP(int[] layers) {
+        this.learningRate = 0.1;
         this.layers = new Layer[layers.length-1];
         for (int i=1; i<layers.length; i++) {
             this.layers[i-1] = new Layer(layers[i-1], layers[i]);
