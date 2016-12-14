@@ -77,7 +77,7 @@ public  class DataStream {
 
     private void normalizeBatch() {
         for (Data data: batch) {
-            for (int i=0; i<data.inputs.length; i++) {
+            for (int i=0; i<data.inputs.length && std[i]!=0; i++) {
                 data.inputs[i] = (data.inputs[i]-mean[i])/std[i];
             }
         }
