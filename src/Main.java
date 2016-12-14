@@ -34,6 +34,8 @@ public class Main {
         String testingFilePath = "C:\\Users\\khudiakov\\Projects\\fi.muni\\NeuralNetwork\\src\\datastream\\data\\optdigits.tes";
 //        arg: --bs <n>
         int batchSize = 100;
+//        arg: --stochastic
+        boolean stochastic = false;
 //        arg: --randomize
         boolean randomize = true;
 //        arg: --normalize
@@ -64,7 +66,7 @@ public class Main {
         while (network.getGlobalError()>targetGlobalError && maxEpochs-->0) {
             dataStream.load(true);
             while (!(dataset=dataStream.getNextBatch()).isEmpty()) {
-                network.training(dataset, false);
+                network.training(dataset, stochastic);
             }
             System.out.print("\rGlobal training error: "+network.getGlobalError());
         }
