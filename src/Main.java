@@ -12,25 +12,40 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) throws IOException {
 //        Parameters part
+//        *arg: -i <n>
         int nInput = 64;
+//        *arg: -o <n>
         int nOutput = 1;
 
+//        arg: -l <"n1,n2,n3">
         String strLayers = "20";
+//        arg: --af <[sigmoid, tanh]>
         ActivationType defaultActivation = ActivationType.Sigmoid;
+//        arg: --lr <d>
         double learningRate = 0.01;
+//        arg: --momentum
         boolean momentum = true;
+//        arg: --dropout
         boolean dropout = true;
 
+//        *arg: --training-dataset <path>
         String trainingFilePath = "C:\\Users\\khudiakov\\Projects\\fi.muni\\NeuralNetwork\\src\\datastream\\data\\optdigits.tra";
+//        *arg: --testing-dataset <path>
         String testingFilePath = "C:\\Users\\khudiakov\\Projects\\fi.muni\\NeuralNetwork\\src\\datastream\\data\\optdigits.tes";
+//        arg: --bs <n>
         int batchSize = 100;
+//        arg: --randomize
         boolean randomize = true;
-        boolean normilize = true;
+//        arg: --normalize
+        boolean normalize = true;
 
+//        arg: --me <n>
         int maxEpochs = 1000;
+//        arg: --tge <d>
         double targetGlobalError = 0.05;
 
-        double outputMistake = 0.05;
+//        arg: --sm <d>
+        double successMistake = 0.05;
 
 //        Logic part
         String[] hiddenLayers = strLayers.split(",");
@@ -41,7 +56,7 @@ public class Main {
             layers[i+1] = Integer.parseInt(hiddenLayers[i].trim());
         }
         MLP network = new MLP(layers, defaultActivation, learningRate, momentum, dropout);
-        DataStream dataStream = new DataStream(trainingFilePath, testingFilePath, nInput, nOutput, batchSize, randomize, normilize);
+        DataStream dataStream = new DataStream(trainingFilePath, testingFilePath, nInput, nOutput, batchSize, randomize, normalize);
 
         List<Data> dataset;
 
@@ -65,7 +80,7 @@ public class Main {
             for (Data data : dataset) {
                 all++;
                 double[] out = network.forward(data.inputs);
-                if (Math.abs(data.outputs[0] - out[0])<outputMistake) {
+                if (Math.abs(data.outputs[0] - out[0])<successMistake) {
                     success++;
                 }
             }
