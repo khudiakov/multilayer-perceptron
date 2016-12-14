@@ -1,5 +1,7 @@
 package MLP;
 
+import MLP.Activations.ActivationFunction;
+import MLP.Activations.ActivationType;
 import datastream.Data;
 
 import java.util.List;
@@ -11,16 +13,21 @@ import java.util.Random;
 
 public class MLP {
     public Layer[] layers;
-    private double learningRate;
 
+    private double learningRate;
+    private boolean momentum;
+    private boolean dropout;
     private double localErrorsSum = 0.0;
     private int trainingsCount = 0;
 
-    public MLP(int[] layers) {
-        this.learningRate = 0.1;
+    public MLP(int[] layers, ActivationType defaultActivation, double learningRate, boolean momentum, boolean dropout) {
+        this.learningRate = learningRate;
+        this.momentum = momentum;
+        this.dropout = dropout;
+
         this.layers = new Layer[layers.length-1];
         for (int i=1; i<layers.length; i++) {
-            this.layers[i-1] = new Layer(layers[i-1], layers[i]);
+            this.layers[i-1] = new Layer(layers[i-1], layers[i], defaultActivation);
         }
     }
 
@@ -57,7 +64,7 @@ public class MLP {
                         difference = data.outputs[q] - qNeuron.output;
                     }
 
-                    qNeuron.delta = qNeuron.activationFunction.evaluateDerivative(qNeuron.output) * difference;
+                    qNeuron.delta = ActivationFunction.evaluateDerivative(qNeuron.output, qNeuron.activationFunctionType) * difference;
                 }
             }
             double sum = 0.0;
@@ -87,10 +94,13 @@ public class MLP {
                 qNeuron.biasWeight += learningRate * qNeuron.delta * 1;
 
                 for (int j = 0; j < qNeuron.inputWeights.length; j++) {
-                    if(random.nextBoolean()) {
-                        double change = learningRate * qNeuron.delta * qNeuron.inputs[j] + 0.9 * qNeuron.weightsChange[j];
+                    if(!this.dropout || random.nextBoolean()) {
+                        double change = learningRate * qNeuron.delta * qNeuron.inputs[j];
+                        if (momentum) {
+                            change += 0.9 * qNeuron.weightsChange[j];
+                            qNeuron.weightsChange[j] = change;
+                        }
                         qNeuron.inputWeights[j] += change;
-                        qNeuron.weightsChange[j] = change;
                     }
                 }
             }

@@ -1,6 +1,6 @@
 package MLP;
 
-import MLP.Activations.Sigmoid;
+import MLP.Activations.ActivationType;
 
 /**
  * Created by khudiakov on 08.12.2016.
@@ -8,11 +8,11 @@ import MLP.Activations.Sigmoid;
 public class Layer {
     public Neuron[] neurons;
 
-    public Layer(int previousNumberNeurons, int numberNeurons) {
+    public Layer(int previousNumberNeurons, int numberNeurons, ActivationType defaultActivation) {
         this.neurons = new Neuron[numberNeurons];
         final double glorotBengioConstant = Math.sqrt(6 / (numberNeurons + ((double) previousNumberNeurons)));
         for (int i=0; i<this.neurons.length; i++) {
-            this.neurons[i] = new Neuron(previousNumberNeurons, new Sigmoid(), glorotBengioConstant);
+            this.neurons[i] = new Neuron(previousNumberNeurons, defaultActivation, glorotBengioConstant);
         }
     }
 

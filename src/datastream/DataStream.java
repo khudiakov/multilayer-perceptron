@@ -10,8 +10,12 @@ import java.util.*;
  */
 
 public  class DataStream {
-    final private BufferedReader fileStream;
-    final private int batchSize = 100;
+    public boolean training;
+
+    private BufferedReader fileStream;
+    private String trainingFilepath;
+    private String testingFilepath;
+    private int batchSize;
     private boolean normalize;
     private boolean randomize;
     private int nInput;
@@ -21,12 +25,23 @@ public  class DataStream {
     private double[] mean;
     private double[] std;
 
-    public DataStream(String filepath, int nInput, int nOutput, boolean randomize, boolean normalize) throws IOException {
-        fileStream = new BufferedReader(new FileReader(filepath));
-        this.randomize = randomize;
-        this.normalize = normalize;
+    public DataStream(String trainingFilepath, String testingFilepath, int nInput, int nOutput,int batchSize, boolean randomize, boolean normalize) throws IOException {
+        this.trainingFilepath = trainingFilepath;
+        this.testingFilepath = testingFilepath;
         this.nInput = nInput;
         this.nOutput = nOutput;
+        this.batchSize = batchSize;
+        this.randomize = randomize;
+        this.normalize = normalize;
+    }
+
+    public void load(boolean trainingDataset) throws IOException {
+        this.training = trainingDataset;
+        if (trainingDataset) {
+            fileStream = new BufferedReader(new FileReader(this.trainingFilepath));
+        } else {
+            fileStream = new BufferedReader(new FileReader(this.testingFilepath));
+        }
     }
 
     private void defineDatasetMeanStd() throws IOException {
@@ -94,7 +109,7 @@ public  class DataStream {
 
     public List<Data> getNextBatch() throws IOException {
         this.loadBatch();
-        if (this.randomize) {
+        if (this.training && this.randomize) {
             long seed = System.nanoTime();
             Collections.shuffle(batch, new Random(seed));
         }
