@@ -1,7 +1,6 @@
 /**
  * Created by khudiakov on 08.12.2016.
  */
-
 import MLP.Activations.ActivationType;
 import MLP.MLP;
 import datastream.Data;
