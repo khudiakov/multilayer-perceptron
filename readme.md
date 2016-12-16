@@ -8,7 +8,7 @@
 Run command example:
 	`java -cp NeuralNetwork-1.0.jar Main -i 64 -o 1 --training-dataset "/Path/To/TrainingDataset.tra" --testing-dataset "/Path/To/TestingDataset.tes" -l 20 -bs 10 -le 0.02 -me 5000 --randomize --normalize --momentum -tge 0.05 -sm 0.05`
 
-####Available arguments:
+###Available arguments:
 ```
 	(required) 	-i <n> 						- number of inputs
 	(required) 	-o <n> 						- number of ouputs
