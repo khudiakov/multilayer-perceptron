@@ -21,7 +21,7 @@ Run command example:
 				--normalization				- enable input batch normalization
 
 				-l <"n, n, n">				- hidden layers of network (example: "20, 10, 10",
-                                for network with 3 hidden layers, with 20, 10 and 10 neurons)
+                                        for network with 3 hidden layers, with 20, 10 and 10 neurons)
 				-af [sigmoid, tanh]			- set activation function (default: sigmoid)
 				-le <n>						- set learning rate	(default: 0.01)
 				--momentun					- enable momentum optimization
@@ -29,5 +29,5 @@ Run command example:
 				-me <n>						- set maximum of epochs (default: 1000)
 				-tge <n>					- target global error (default: 0.1)
 				-sm <n>						- success mistake, using in comparison of
-                            network output and expected output (default: 0.1)
+                                    network output and expected output (default: 0.1)
 ```
