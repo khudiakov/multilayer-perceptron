@@ -6,7 +6,7 @@
 4. Go to folder `./targer` and run program: `java -cp NeuralNetwork-1.0.jar Main`
 
 Run command example:
-	`java -cp NeuralNetwork-1.0.jar Main -i 64 -o 1 --training-dataset "/Path/To/TrainingDataset.tra" --testing-dataset "/Path/To/TestingDataset.tes" -l 20 -bs 10 -le 0.02 -me 5000 --randomize --normalize --momentum -tge 0.05 -sm 0.05`
+	`java -cp NeuralNetwork-1.0.jar Main -i 64 -o 1 --training-dataset "/Path/To/TrainingDataset.tra" --testing-dataset "/Path/To/TestingDataset.tes" -l 20 -bs 10 -lr 0.02 -me 5000 --randomize --normalize --momentum -tge 0.05 -sm 0.05`
 
 #### Available arguments:
 ```
@@ -23,7 +23,7 @@ Run command example:
 				-l <"n, n, n">				- hidden layers of network (example: "20, 10, 10",
                                         for network with 3 hidden layers, with 20, 10 and 10 neurons)
 				-af [sigmoid, tanh]			- set activation function (default: sigmoid)
-				-le <n>						- set learning rate	(default: 0.01)
+				-lr <n>						- set learning rate	(default: 0.01)
 				--momentun					- enable momentum optimization
 				--dropout					- enable dropout optimization
 				-me <n>						- set maximum of epochs (default: 1000)
